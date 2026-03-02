@@ -1,0 +1,288 @@
+Enter password: ************
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 13
+Server version: 8.0.45 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2026, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> USE loan_default;
+Database changed
+mysql> CREATE TABLE loan_data(
+    -> id INT AUTO_INCREMENT PRIMARY KEY,
+    -> loan_amnt DECIMAL(10,2),
+    -> int_rate DECIMAL(5,2),
+    -> installment DECIMAL(10,2),
+    -> grade INT,
+    -> emp_length INT,
+    -> home_ownership INT,
+    -> annual_inc DECIMAL(12,2),
+    -> dti DECIMAL(8,2),
+    -> open_acc INT,
+    -> revol_util  DECIMAL(6,2),
+    -> total_acc INT,
+    -> is_default INT,
+    -> loan_to_income DECIMAL(10,6),
+    -> monthly_income DECIMAL(12,2),
+    -> payment_to_income DECIMAL(10,6),
+    -> high_utilization INT,
+    -> credit_experience INT
+    -> );
+Query OK, 0 rows affected (0.22 sec)
+
+mysql> USE loan_default;
+Database changed
+mysql> SELECT grade,
+    -> CASE grade
+    -> WHEN 1 THEN 'A - Safest'
+    -> WHEN 2 THEN 'B'
+    -> WHEN 3 THEN 'C'
+    -> WHEN 4 THEN 'D'
+    -> WHEN 5 THEN 'E'
+    -> WHEN 6 THEN 'F'
+    -> WHEN 7 THEN 'G - Riskiest'
+    -> END AS grade_label,
+    -> COUNT(*) AS total_loans,
+    -> SUM(is_default) AS defaults,
+    -> ROUND(AVG(is_default) * 100,2) AS default_rate_pct,
+    -> ROUND(AVG(int_rate), 2) AS avg_interest_rate,
+    -> ROUND(AVG(loan_amnt), 2) AS avg_loan_amount
+    -> FROM loan_data
+    -> GROUP BY grade
+    -> ORDER BY grade;
++-------+--------------+-------------+----------+------------------+-------------------+-----------------+
+| grade | grade_label  | total_loans | defaults | default_rate_pct | avg_interest_rate | avg_loan_amount |
++-------+--------------+-------------+----------+------------------+-------------------+-----------------+
+|     1 | A - Safest   |      234515 |    14177 |             6.05 |              7.11 |        13868.74 |
+|     2 | B            |      391987 |    52482 |            13.39 |             10.68 |        13220.42 |
+|     3 | C            |      380979 |    85515 |            22.45 |             14.02 |        14173.45 |
+|     4 | D            |      200572 |    60949 |            30.39 |             17.72 |        15259.81 |
+|     5 | E            |       93453 |    35975 |            38.50 |             21.13 |        17605.84 |
+|     6 | F            |       32002 |    14471 |            45.22 |             24.93 |        19080.89 |
+|     7 | G - Riskiest |        9098 |     4546 |            49.97 |             27.72 |        20571.27 |
++-------+--------------+-------------+----------+------------------+-------------------+-----------------+
+7 rows in set (2.70 sec)
+
+mysql> SELECT
+    -> CASE
+    -> WHEN int_rate < 8 THEN '1. Below 8%'
+    -> WHEN int_rate < 12 THEN '2. 8% to 12%'
+    -> WHEN int_rate < 16 THEN '3. 12% TO 16%'
+    -> WHEN int_rate < 20 THEN '4. 16% to 20%'
+    -> WHEN int_rate < 25 THEN '5. 20% to 25%'
+    -> ELSE '6. Above 25%'
+    -> END AS rate_bucket,
+    -> COUNT(*) AS total_loans,
+    -> SUM(is_default) AS defaults,
+    -> ROUND(AVG(is_default)*100, 2) AS default_rate_pct,
+    -> ROUND(AVG(loan_amnt), 2) AS avg_loan_amount,
+    -> FROM loan_data
+    -> GROUP BY rate_bucket,
+    -> ORDER BY rate_bucket;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FROM loan_data
+GROUP BY rate_bucket,
+ORDER BY rate_bucket' at line 14
+mysql> SELECT
+    -> WHEN int_rate < 8 THEN '1. Below 8%'
+    -> WHEN int_rate < 12 THEN '2. 8% to 12%'
+    ->
+    -> WHEN int_rate < 16 THEN '3. 12% TO 16%'
+    -> WHEN int_rate < 20 THEN '4. 16% to 20%'
+    -> WHEN int_rate < 25 THEN '5. 20% to 25%'
+    -> ELSE '6. Above 25%'
+    -> END AS rate_bucket,
+    -> COUNT(*) AS total_loans,
+    -> SUM(is_default) AS defaults,
+    -> ROUND(AVG(is_default)*100, 2) AS default_rate_pct,
+    -> ROUND(AVG(loan_amnt), 2) AS avg_loan_amount,
+    -> FROM loan_data
+    -> GROUP BY rate_bucket
+    -> ORDER BY rate_bucket;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHEN int_rate < 8 THEN '1. Below 8%'
+WHEN int_rate < 12 THEN '2. 8% to 12%'
+
+WHE' at line 2
+mysql> SELECT
+    -> WHEN int_rate < 8 THEN '1. Below 8%'
+    -> WHEN int_rate < 12 THEN '2. 8% to 12%'
+    -> WHEN int_rate < 16 THEN '3. 12% TO 16%'
+    -> WHEN int_rate < 20 THEN '4. 16% to 20%'
+    -> WHEN int_rate < 25 THEN '5. 20% to 25%'
+    -> ELSE '6. Above 25%'
+    -> END AS rate_bucket,
+    -> COUNT(*) AS total_loans,
+    -> SUM(is_default) AS defaults,
+    -> ROUND(AVG(is_default)*100, 2) AS default_rate_pct,
+    -> ROUND(AVG(loan_amnt), 2) AS avg_loan_amount,
+    -> FROM loan_data
+    -> GROUP BY rate_bucket
+    -> ORDER BY rate_bucket;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'WHEN int_rate < 8 THEN '1. Below 8%'
+WHEN int_rate < 12 THEN '2. 8% to 12%'
+WHEN' at line 2
+mysql> SELECT
+    ->     CASE
+    ->         WHEN int_rate < 8  THEN '1. Below 8%'
+    ->         WHEN int_rate < 12 THEN '2. 8% to 12%'
+    ->         WHEN int_rate < 16 THEN '3. 12% to 16%'
+    ->         WHEN int_rate < 20 THEN '4. 16% to 20%'
+    ->         WHEN int_rate < 25 THEN '5. 20% to 25%'
+    ->         ELSE                    '6. Above 25%'
+    ->     END AS rate_bucket,
+    ->     COUNT(*)                        AS total_loans,
+    ->     SUM(is_default)                 AS defaults,
+    ->     ROUND(AVG(is_default)*100, 2)   AS default_rate_pct,
+    ->     ROUND(AVG(loan_amnt), 2)        AS avg_loan_amount
+    -> FROM loan_data
+    -> GROUP BY rate_bucket
+    -> ORDER BY rate_bucket;
++---------------+-------------+----------+------------------+-----------------+
+| rate_bucket   | total_loans | defaults | default_rate_pct | avg_loan_amount |
++---------------+-------------+----------+------------------+-----------------+
+| 1. Below 8%   |      207707 |    12102 |             5.83 |        13876.29 |
+| 2. 8% to 12%  |      381727 |    50919 |            13.34 |        13303.41 |
+| 3. 12% to 16% |      419020 |    90386 |            21.57 |        13978.30 |
+| 4. 16% to 20% |      224328 |    70046 |            31.22 |        15725.87 |
+| 5. 20% to 25% |       83614 |    32112 |            38.41 |        17787.70 |
+| 6. Above 25%  |       26210 |    12550 |            47.88 |        19287.48 |
++---------------+-------------+----------+------------------+-----------------+
+6 rows in set (3.40 sec)
+
+mysql> SELECT
+    ->     CASE emp_length
+    ->         WHEN -1 THEN 'Unknown'
+    ->         WHEN  0 THEN 'Less than 1 year'
+    ->         WHEN 10 THEN '10+ years'
+    ->         ELSE CONCAT(emp_length, ' years')
+    ->     END AS employment,
+    ->     COUNT(*)                        AS total_loans,
+    ->     SUM(is_default)                 AS defaults,
+    ->     ROUND(AVG(is_default)*100, 2)   AS default_rate_pct,
+    ->     ROUND(AVG(annual_inc), 2)       AS avg_income
+    -> FROM loan_data
+    -> GROUP BY emp_length
+    -> ORDER BY emp_length;
++------------------+-------------+----------+------------------+------------+
+| employment       | total_loans | defaults | default_rate_pct | avg_income |
++------------------+-------------+----------+------------------+------------+
+| Unknown          |       77848 |    20977 |            26.95 |   49626.99 |
+| Less than 1 year |      107880 |    22137 |            20.52 |   70346.76 |
+| 1 years          |       88381 |    18182 |            20.57 |   70674.29 |
+| 2 years          |      121605 |    24089 |            19.81 |   73013.94 |
+| 3 years          |      107436 |    21463 |            19.98 |   73663.59 |
+| 4 years          |       80449 |    15885 |            19.75 |   74303.28 |
+| 5 years          |       84002 |    16474 |            19.61 |   74600.01 |
+| 6 years          |       62635 |    12129 |            19.36 |   75307.79 |
+| 7 years          |       59538 |    11606 |            19.49 |   75529.65 |
+| 8 years          |       60612 |    12090 |            19.95 |   76585.67 |
+| 9 years          |       50862 |    10134 |            19.92 |   76718.69 |
+| 10+ years        |      441358 |    82949 |            18.79 |   82344.77 |
++------------------+-------------+----------+------------------+------------+
+12 rows in set (1.93 sec)
+
+mysql> SELECT
+    ->     ROUND(AVG(loan_amnt), 2)            AS avg_loan_amount,
+    ->     ROUND(AVG(int_rate), 2)             AS avg_interest_rate,
+    ->     ROUND(AVG(annual_inc), 2)           AS avg_annual_income,
+    ->     ROUND(AVG(dti), 2)                  AS avg_dti,
+    ->     ROUND(AVG(loan_to_income), 4)       AS avg_loan_to_income,
+    ->     ROUND(AVG(revol_util), 2)           AS avg_credit_utilization,
+    ->     ROUND(AVG(credit_experience), 2)    AS avg_credit_experience
+    -> FROM loan_data
+    -> WHERE is_default = 1;
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+| avg_loan_amount | avg_interest_rate | avg_annual_income | avg_dti | avg_loan_to_income | avg_credit_utilization | avg_credit_experience |
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+|        15554.95 |             15.71 |          69575.85 |   20.06 |             0.2478 |                  54.76 |                 12.81 |
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+1 row in set (1.34 sec)
+
+mysql> SELECT
+    ->     ROUND(AVG(loan_amnt), 2)            AS avg_loan_amount,
+    ->     ROUND(AVG(int_rate), 2)             AS avg_interest_rate,
+    ->     ROUND(AVG(annual_inc), 2)           AS avg_annual_income,
+    ->     ROUND(AVG(dti), 2)                  AS avg_dti,
+    ->     ROUND(AVG(loan_to_income), 4)       AS avg_loan_to_income,
+    ->     ROUND(AVG(revol_util), 2)           AS avg_credit_utilization,
+    ->     ROUND(AVG(credit_experience), 2)    AS avg_credit_experience
+    -> FROM loan_data
+    -> WHERE is_default = 0;
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+| avg_loan_amount | avg_interest_rate | avg_annual_income | avg_dti | avg_loan_to_income | avg_credit_utilization | avg_credit_experience |
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+|        14116.19 |             12.62 |          76485.38 |   17.74 |             0.2069 |                  51.08 |                 13.53 |
++-----------------+-------------------+-------------------+---------+--------------------+------------------------+-----------------------+
+1 row in set (1.72 sec)
+
+mysql> ```
+    `>
+    `> **What to look for:** Compare the two results side by side. You'll clearly see defaulters have:
+    `> ```
+    -> Higher interest rate    ✅
+    -> Higher DTI ratio        ✅
+    -> Higher loan to income   ✅
+    -> Higher credit util      ✅
+    -> Lower annual income     ✅
+    -> ;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '```
+
+**What to look for:** Compare the two results side by side. You'll clearly ' at line 1
+mysql> SELECT
+    ->     ROUND(AVG(CASE WHEN is_default=1 THEN int_rate END) -
+    ->           AVG(CASE WHEN is_default=0 THEN int_rate END), 2)
+    ->           AS interest_rate_gap,
+    ->
+    ->     ROUND(AVG(CASE WHEN is_default=1 THEN dti END) -
+    ->           AVG(CASE WHEN is_default=0 THEN dti END), 2)
+    ->           AS dti_gap,
+    ->
+    ->     ROUND(AVG(CASE WHEN is_default=1 THEN loan_to_income END) -
+    ->           AVG(CASE WHEN is_default=0 THEN loan_to_income END), 4)
+    ->           AS loan_to_income_gap,
+    ->
+    ->     ROUND(AVG(CASE WHEN is_default=1 THEN revol_util END) -
+    ->           AVG(CASE WHEN is_default=0 THEN revol_util END), 2)
+    ->           AS revol_util_gap,
+    ->
+    ->     ROUND(AVG(CASE WHEN is_default=1 THEN annual_inc END) -
+    ->           AVG(CASE WHEN is_default=0 THEN annual_inc END), 2)
+    ->           AS income_gap
+    -> FROM loan_data;
++-------------------+---------+--------------------+----------------+------------+
+| interest_rate_gap | dti_gap | loan_to_income_gap | revol_util_gap | income_gap |
++-------------------+---------+--------------------+----------------+------------+
+|              3.09 |    2.33 |             0.0409 |           3.68 |   -6909.52 |
++-------------------+---------+--------------------+----------------+------------+
+1 row in set (2.28 sec)
+
+mysql> SELECT
+    ->     grade,
+    ->     ROUND(AVG(int_rate), 2)           AS avg_int_rate,
+    ->     ROUND(AVG(dti), 2)                AS avg_dti,
+    ->     ROUND(AVG(annual_inc), 2)         AS avg_annual_inc,
+    ->     ROUND(AVG(loan_to_income), 4)     AS avg_loan_to_income,
+    ->     COUNT(*)                          AS total_loans,
+    ->     SUM(is_default)                   AS total_defaults,
+    ->     ROUND(AVG(is_default)*100, 2)     AS default_rate_pct
+    -> FROM loan_data
+    -> GROUP BY grade
+    -> ORDER BY grade;
++-------+--------------+---------+----------------+--------------------+-------------+----------------+------------------+
+| grade | avg_int_rate | avg_dti | avg_annual_inc | avg_loan_to_income | total_loans | total_defaults | default_rate_pct |
++-------+--------------+---------+----------------+--------------------+-------------+----------------+------------------+
+|     1 |         7.11 |   15.58 |       87085.23 |             0.1795 |      234515 |          14177 |             6.05 |
+|     2 |        10.68 |   17.32 |       75295.17 |             0.1963 |      391987 |          52482 |            13.39 |
+|     3 |        14.02 |   18.83 |       71771.79 |             0.2192 |      380979 |          85515 |            22.45 |
+|     4 |        17.72 |   20.06 |       69314.47 |             0.2434 |      200572 |          60949 |            30.39 |
+|     5 |        21.13 |   20.69 |       71128.41 |             0.2724 |       93453 |          35975 |            38.50 |
+|     6 |        24.93 |   20.87 |       72519.49 |             0.2878 |       32002 |          14471 |            45.22 |
+|     7 |        27.72 |   21.17 |       75361.53 |             0.3033 |        9098 |           4546 |            49.97 |
++-------+--------------+---------+----------------+--------------------+-------------+----------------+------------------+
+7 rows in set (2.18 sec)
+
+mysql>

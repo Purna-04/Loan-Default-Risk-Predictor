@@ -1,0 +1,5 @@
+risk_tier,total_loans,actual_defaults,avg_loan_amnt,avg_int_rate,avg_dti,avg_default_prob,default_rate_pct
+High Risk,45493,17462,18333.94,19.54,22.11,0.37,38.38
+Low Risk,53380,3215,13358.72,7.51,14.51,0.07,6.02
+Medium Risk,166233,30946,13576.6,13.12,18.15,0.19,18.62
+Very High Risk,3416,2000,18997.94,25.07,28.02,0.53,58.55
