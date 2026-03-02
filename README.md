@@ -36,17 +36,17 @@ Features Used: 17 core features
 
 | Metric | Score |
 |--------|-------|
-| **ROC-AUC Score** **0.7068** |
-| Accuracy: 80.03% |
-| Precision: 0.62 |
-| Recall: 0.42 |
-| F1 Score: 0.50 |
+| **ROC-AUC Score** | **0.7068** |
+| Accuracy | 80.03% |
+| Precision | 0.62 |
+| Recall | 0.42 |
+| F1 Score | 0.50 |
 
 ### Model Comparison
 | Model | ROC-AUC |
 |-------|---------|
-| Logistic Regression (baseline): 0.6998 |
-| **Random Forest (final model)**: **0.7068** |
+| Logistic Regression (baseline) | 0.6998 |
+| **Random Forest (final model)** | **0.7068** |
 
 **🔍 Key Business Findings**
 
